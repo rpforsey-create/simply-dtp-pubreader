@@ -1,0 +1,30 @@
+name: Build Publisher reader
+
+# Builds libmspub (the Publisher reader used by LibreOffice) for the browser (WebAssembly).
+# Runs every time files change, or by hand from the Actions tab ("Run workflow").
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: emscripten/emsdk:3.1.64
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends autoconf automake libtool pkg-config make xz-utils bzip2 curl ca-certificates
+
+      - name: Build the reader
+        run: bash build.sh
+
+      - name: Save the result
+        uses: actions/upload-artifact@v4
+        with:
+          name: pubreader
+          path: dist/
+          if-no-files-found: error
