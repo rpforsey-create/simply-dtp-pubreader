@@ -19,6 +19,15 @@ export CXXFLAGS="-O2 -fexceptions -std=gnu++14 -D_LIBCPP_ENABLE_CXX17_REMOVED_UN
 export LDFLAGS="-fexceptions"
 export CPPFLAGS="-I$PREFIX/include"
 export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
+# Emscripten's configure helper replaces PKG_CONFIG_PATH with EM_PKG_CONFIG_PATH, so set that too
+export EM_PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
+# and tell libodfgen / libmspub directly where librevenge is, in case pkg-config still can't see it
+export REVENGE_CFLAGS="-I$PREFIX/include/librevenge-0.0"
+export REVENGE_LIBS="-L$PREFIX/lib -lrevenge-stream-0.0 -lrevenge-0.0"
+export REVENGE_STREAM_CFLAGS="-I$PREFIX/include/librevenge-0.0"
+export REVENGE_STREAM_LIBS="-L$PREFIX/lib -lrevenge-stream-0.0"
+export REVENGE_GENERATORS_CFLAGS="-I$PREFIX/include/librevenge-0.0"
+export REVENGE_GENERATORS_LIBS=""
 # use Emscripten's own builds of these libraries instead of looking for system ones
 export ZLIB_CFLAGS="-sUSE_ZLIB=1"  ZLIB_LIBS="-sUSE_ZLIB=1"
 export ICU_CFLAGS="-sUSE_ICU=1"    ICU_LIBS="-sUSE_ICU=1"
