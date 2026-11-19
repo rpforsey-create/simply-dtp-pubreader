@@ -7,6 +7,7 @@ This repository builds a Publisher (.pub) file reader for the browser, used by S
 - **libodfgen** — MPL 2.0 / LGPL 2.1+ — https://sourceforge.net/p/libwpd/wiki/libodfgen/
 - **ICU** (Unicode text conversion) — Unicode License — https://github.com/unicode-org/icu
 - **Boost** (headers) — Boost Software License 1.0 — https://www.boost.org/LICENSE_1_0.txt
+- **libxml2** — MIT License — https://gitlab.gnome.org/GNOME/libxml2
 - **zlib** — zlib License — https://zlib.net/zlib_license.html
 - **src/pubreader.cpp** (the connector) — Mozilla Public License 2.0 — https://mozilla.org/MPL/2.0/
 

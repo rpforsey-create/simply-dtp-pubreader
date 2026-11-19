@@ -11,6 +11,7 @@ mkdir -p "$PREFIX" "$WORK" "$ROOT/dist/licences"
 REVENGE=librevenge-0.0.5
 ODFGEN=libodfgen-0.1.8
 MSPUB=libmspub-0.1.4
+XML2=libxml2-2.12.9
 
 step() { echo; echo "=================== $* ==================="; }
 
@@ -28,6 +29,10 @@ export REVENGE_STREAM_CFLAGS="-I$PREFIX/include/librevenge-0.0"
 export REVENGE_STREAM_LIBS="-L$PREFIX/lib -lrevenge-stream-0.0"
 export REVENGE_GENERATORS_CFLAGS="-I$PREFIX/include/librevenge-0.0"
 export REVENGE_GENERATORS_LIBS=""
+# libodfgen uses libxml2 (built below)
+export XML_CFLAGS="-I$PREFIX/include/libxml2"
+export XML_LIBS="-L$PREFIX/lib -lxml2"
+export LIBXML2_CFLAGS="$XML_CFLAGS" LIBXML2_LIBS="$XML_LIBS"
 # use Emscripten's own builds of these libraries instead of looking for system ones
 export ZLIB_CFLAGS="-sUSE_ZLIB=1"  ZLIB_LIBS="-sUSE_ZLIB=1"
 export ICU_CFLAGS="-sUSE_ICU=1"    ICU_LIBS="-sUSE_ICU=1"
@@ -73,6 +78,11 @@ fetch "$REVENGE" \
   "https://sourceforge.net/projects/libwpd/files/librevenge/$REVENGE/$REVENGE.tar.xz/download"
 build_lib "$REVENGE" --disable-tests --disable-generators --enable-streams
 
+fetch "$XML2" \
+  "https://download.gnome.org/sources/libxml2/2.12/$XML2.tar.xz"
+build_lib "$XML2" --without-python --without-zlib --without-lzma --without-http --without-ftp \
+  --without-threads --without-modules --without-iconv --without-icu --without-readline --without-debug
+
 fetch "$ODFGEN" \
   "https://dev-www.libreoffice.org/src/$ODFGEN.tar.xz" \
   "https://dev-www.libreoffice.org/src/$ODFGEN.tar.bz2" \
@@ -89,7 +99,7 @@ step "Linking pubreader"
 INC="-I$PREFIX/include/librevenge-0.0 -I$PREFIX/include/libodfgen-0.1 -I$PREFIX/include/libmspub-0.1"
 em++ $CXXFLAGS $INC "$ROOT/src/pubreader.cpp" \
   "$PREFIX/lib/libmspub-0.1.a" "$PREFIX/lib/libodfgen-0.1.a" \
-  "$PREFIX/lib/librevenge-stream-0.0.a" "$PREFIX/lib/librevenge-0.0.a" \
+  "$PREFIX/lib/librevenge-stream-0.0.a" "$PREFIX/lib/librevenge-0.0.a" "$PREFIX/lib/libxml2.a" \
   -sUSE_ICU=1 -sUSE_ZLIB=1 -sUSE_BOOST_HEADERS=1 \
   -sMODULARIZE=1 -sEXPORT_ES6=1 -sEXPORT_NAME=createPubReader -sENVIRONMENT=web,worker \
   -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=8MB \
